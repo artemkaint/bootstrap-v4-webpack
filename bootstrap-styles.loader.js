@@ -1,51 +1,7 @@
-var partials = [
-  'mixins',
-
-  'normalize',
-  'print',
-
-  'reboot',
-  'type',
-  'images',
-  'code',
-  'grid',
-  'tables',
-  'forms',
-  'buttons',
-
-  'animation',
-  'dropdown',
-  'button-group',
-  'input-group',
-  'custom-forms',
-  'nav',
-  'navbar',
-  'card',
-  'breadcrumb',
-  'pagination',
-  'pager',
-  'labels',
-  'jumbotron',
-  'alert',
-  'progress',
-  'media',
-  'list-group',
-  'responsive-embed',
-  'close',
-
-  'modal',
-  'tooltip',
-  'popover',
-  'carousel',
-
-  'utilities',
-  'utilities-background',
-  'utilities-spacing',
-  'utilities-responsive'
-];
 var path = require('path');
 var bootstrapPath = require('./bootstrapPath');
 var logger = require('./logger');
+var glob = require('glob');
 
 function addImportReturnDependency(loader, config, propertyName) {
   var fileNameResolved;
@@ -63,6 +19,19 @@ module.exports = function(content) {
   var source;
   var config = this.exec(content, this.resourcePath);
   var pathToBootstrap = bootstrapPath.getPath(this.context);
+
+  var fileNameRegexp = new RegExp(path.join(pathToBootstrap, 'scss', '_(.*)\.scss'));
+  var partials = glob.sync(path.join(pathToBootstrap, 'scss', '_*.scss'), {}).map(function(partial) {
+    var regexp = path.join(pathToBootstrap, 'scss', '_*.scss');
+    return partial.replace(fileNameRegexp, '$1');
+  });
+  if (!!config.verbose) {
+    var unnecessary = Object.keys(config.styles).filter(function(style) {
+      return !~partials.indexOf(style);
+    });
+    logger.verbose(config, 'unnecessary bootstrap modules:', unnecessary.join(', '));
+  }
+
   var relativePathToBootstrap = path.relative(this.context, pathToBootstrap);
   var start = '';
   this.cacheable(true);

@@ -25,6 +25,7 @@
   "peerDependencies": {
     "bootstrap": "*",
     "css-loader": "*",
+    "glob": "*",
     "sass-loader": "*",
     "style-loader": "*",
     "url-loader": "*",
