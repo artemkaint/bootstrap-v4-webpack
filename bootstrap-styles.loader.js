@@ -10,7 +10,6 @@ function addImportReturnDependency(loader, config, propertyName) {
     fileNameResolved = path.relative(loader.context, fileName);
 
     logger.verbose(config, 'fileName for %s: %s', propertyName, fileNameResolved);
-    loader.addDependency(fileNameResolved);
     return '@import \'' + fileNameResolved + '\';';
   }
 }
@@ -21,7 +20,6 @@ module.exports = function(content) {
 
   var fileNameRegexp = new RegExp(path.join(pathToBootstrap, 'scss', '_(.*)\.scss'));
   var partials = glob.sync(path.join(pathToBootstrap, 'scss', '_*.scss'), {}).map(function(partial) {
-    var regexp = path.join(pathToBootstrap, 'scss', '_*.scss');
     return partial.replace(fileNameRegexp, '$1');
   });
   if (!!config.verbose) {
